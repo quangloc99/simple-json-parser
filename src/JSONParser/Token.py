@@ -1,6 +1,9 @@
 class Token:
     def __init__(self):
-        self._isValue = False
+        pass
 
     def isValue(self):
-        return self._isValue
+        return False
+
+    def toPytnonValue(self):
+        raise ValueError("Cannot convert type %s to Python value" % type(self).__name__)

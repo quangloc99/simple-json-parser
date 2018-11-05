@@ -6,11 +6,22 @@ from ..utils import doThenRet
 class LiteralToken(LexToken):
     def __init__(self, dat):
         super().__init__(dat)
-        self._isValue = True
+
+    def isValue(self):
+        return True
+
         
-class TrueToken(LiteralToken): pass
-class FalseToken(LiteralToken): pass
-class NullToken(LiteralToken): pass
+class TrueToken(LiteralToken):
+    def toPythonValue(self):
+        return True
+
+class FalseToken(LiteralToken):
+    def toPythonValue(self):
+        return False
+
+class NullToken(LiteralToken):
+    def toPythonValue(self):
+        return None
 
 def generateStates(matchString, cls):
     def generateCurrentState(currentMatchingChar, nextState):

@@ -13,6 +13,22 @@ class NumberToken(LexToken):
         self.hasPositiveExponent = True
         self.exponentPart = ''
 
+    def isValue(self):
+        return True
+
+    def toPythonValue(self):
+        ans = float(self.integerPart)
+        if self.fractionPart != '':
+            ans += int(self.fractionPart) / 10 ** len(self.fractionPart)
+        if self.exponentPart != '':
+            if self.hasPositiveExponent:
+                ans *= 10 ** int(self.exponentPart)
+            else:
+                ans /= 10 ** int(self.exponentPart)
+        if not self.isPositve:
+            ans = -ans
+        return ans
+
     def update(self, part, ch):
         val = ord(ch) - ord('0')
         if part == 'i': self.integerPart += ch
