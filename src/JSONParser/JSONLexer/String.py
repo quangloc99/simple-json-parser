@@ -6,6 +6,7 @@ from ..utils import doThenRet
 class StringToken(LexToken):
     def __init__(self, data):
         super().__init__(data)
+        self._isValue = True
         self.content = []
 
     def __repr__(self):

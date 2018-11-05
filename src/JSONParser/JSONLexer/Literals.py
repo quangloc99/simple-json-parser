@@ -3,9 +3,14 @@ from .LexingError import LexingError
 from .predefinedStates import endParsing
 from ..utils import doThenRet
 
-class TrueToken(LexToken): pass
-class FalseToken(LexToken): pass
-class NullToken(LexToken): pass
+class LiteralToken(LexToken):
+    def __init__(self, dat):
+        super().__init__(dat)
+        self._isValue = True
+        
+class TrueToken(LiteralToken): pass
+class FalseToken(LiteralToken): pass
+class NullToken(LiteralToken): pass
 
 def generateStates(matchString, cls):
     def generateCurrentState(currentMatchingChar, nextState):

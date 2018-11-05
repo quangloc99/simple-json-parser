@@ -6,6 +6,7 @@ from ..utils import doThenRet
 class NumberToken(LexToken):
     def __init__(self, userData, isPositive = True):
         super().__init__(userData)
+        self._isValue = True
         self.isPositive = isPositive
         self.integerPart = ''
         self.fractionPart = ''
