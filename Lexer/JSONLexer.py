@@ -6,8 +6,8 @@ def beginParse(ch, dat):
     return skipSpaces(ch, dat)
 endParse = beginParse
 
-def parsingError(ch, dat):
-    raise LexingError(dat['lineNum'])
+def lexingError(ch, dat):
+    raise LexingError(dat)
 
 def skipSpaces(ch, dat):
     return (

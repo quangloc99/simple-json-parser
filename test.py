@@ -47,3 +47,5 @@ class TestJSONLexer(unittest.TestCase):
         self.assertEqual(helper("007589.969"), ["+0.0e+0", "+0.0e+0", "+7589.969e+0"])
         self.assertEqual(helper("3564\n \n36456e946\n -45.324\t\t  3346.65476E-9456"),
                 ["+3564.0e+0", "+36456.0e+946", "-45.324e+0", "+3346.65476e-9456"])
+
+        # TODO: add test for exceptions

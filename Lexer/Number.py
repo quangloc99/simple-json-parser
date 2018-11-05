@@ -1,8 +1,8 @@
 from Lexer.Base import LexToken, changeAndRet
 
 class NumberToken(LexToken):
-    def __init__(self, lineNumber, isPositive = True):
-        super().__init__(lineNumber)
+    def __init__(self, userData, isPositive = True):
+        super().__init__(userData)
         self.isPositive = isPositive
         self.integerPart = ''
         self.fractionPart = ''
@@ -37,18 +37,18 @@ class NumberToken(LexToken):
 isBeginningOfNumber = lambda ch: ch == '-' or ch.isdigit()
 def beginParseNumber(ch, dat):
     if isBeginningOfNumber(ch):
-        dat["returnValue"] = NumberToken(dat['lineNum'], ch != '-')
+        dat["returnValue"] = NumberToken(dat, ch != '-')
     return (
         beginParseIntegerPart(ch, dat) if ch.isdigit()
         else beginParseIntegerPart if ch == '-'
-        else parsingError
+        else JSONLexer.lexingError
     )
 
 def beginParseIntegerPart(ch, dat):
     return (
         changeAndRet(lambda: dat["returnValue"].update('i', ch), endParseIntegerPart) if ch == '0'
         else parseIntegerPart(ch, dat) if ch.isdigit()
-        else parsingError
+        else JSONLexer.lexingError
     )
 
 def parseIntegerPart(ch, dat):
@@ -67,7 +67,7 @@ def endParseIntegerPart(ch, dat):
 def beginParseFractionPart(ch, dat):
     return (
         parseFractionPart(ch, dat) if ch.isdigit()
-        else parsingError
+        else JSONLexer.lexingError
     )
 
 def parseFractionPart(ch, dat):
@@ -81,13 +81,13 @@ def beginParseExponentPart1(ch, dat):
     return (
         changeAndRet(lambda: dat["returnValue"].update('se', ch), beginParseExponentPart2) if ch in '+-'
         else beginParseExponentPart2(ch, dat) if ch.isdigit()
-        else parsingError
+        else JSONLexer.lexingError
     )
 
 def beginParseExponentPart2(ch, dat):
     return (
         parseExponentPart(ch, dat) if ch.isdigit()
-        else parsingError
+        else JSONLexer.lexingError
     )
 
 def parseExponentPart(ch, dat):

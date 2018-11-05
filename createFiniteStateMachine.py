@@ -15,7 +15,7 @@ def createFiniteStateMachine(input, endStates, currentState, customData = {}, de
     except StopIteration:
         currentState = currentState(defaultLastElement, customData)
         if currentState not in endStates:
-            raise ValueError("The state {} is not one of the end stats: {}",
+            raise ValueError("The state {} is not one of the end states: {}",
                     currentState.__name__,
                     join(',', map(lambda x: x.__name__, endStates))
             )
