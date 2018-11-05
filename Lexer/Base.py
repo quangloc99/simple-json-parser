@@ -1,5 +1,5 @@
-def changeAndRet(changes, ret):
-    changes()
+def doThenRet(actions, ret):
+    actions()
     return ret
 
 class LexingError(Exception):

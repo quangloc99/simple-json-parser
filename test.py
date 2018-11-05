@@ -1,5 +1,6 @@
 import unittest
 from Lexer.JSONLexer import JSONLexer
+from Lexer.Base import LexingError
 
 helper = lambda exp: list(map(str, JSONLexer(exp)))
 
@@ -49,3 +50,21 @@ class TestJSONLexer(unittest.TestCase):
                 ["+3564.0e+0", "+36456.0e+946", "-45.324e+0", "+3346.65476e-9456"])
 
         # TODO: add test for exceptions
+
+    def test_parse_string(self):
+        def first(inp):
+            return next(JSONLexer(inp))
+
+        self.assertEqual(first('""').content, [])
+        self.assertEqual(first('"abc"').content, ['a', 'b', 'c'])
+        self.assertEqual(first('" as  \tdsg  ;  s"').content, [' ', 'a', 's', ' ', ' ', '\t', 'd', 's', 'g', ' ', ' ', ';', ' ', ' ', 's'])
+        self.assertEqual(first('"\\t\\n\\r \t \\u270A\\u0101"').content, ['\\t', '\\n', '\\r', ' ', '\t', ' ', '\\u270a', '\\u0101'])
+        self.assertEqual(first('"[](){}\\"\\\\"').content, ['[', ']', '(', ')', '{', '}', '\\"', '\\\\'])
+        with self.assertRaises(ValueError): next(JSONLexer('"'))
+        with self.assertRaises(ValueError): next(JSONLexer('     " sagfjsklh hgkdsgh  shuelighkshg'))
+        with self.assertRaises(LexingError): next(JSONLexer(' "\\somevalue"  '))
+        with self.assertRaises(LexingError): next(JSONLexer('   "\\ux"'))
+
+if __name__ == "__main__":
+    unittest.main()
+

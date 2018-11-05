@@ -1,4 +1,4 @@
-def createFiniteStateMachine(input, endStates, currentState, customData = {}, defaultLastElement = '\u0000'):
+def createFiniteStateMachine(input, endStates, currentState, customData = {}, lastElement = '\u0000'):
     inputIter = iter(input)
     currentState = currentState
     curInput = next(inputIter)
@@ -13,12 +13,12 @@ def createFiniteStateMachine(input, endStates, currentState, customData = {}, de
             else:
                 curInput = next(inputIter)
     except StopIteration:
-        currentState = currentState(defaultLastElement, customData)
+        currentState = currentState(lastElement, customData)
         if currentState not in endStates:
-            raise ValueError("The state {} is not one of the end states: {}",
+            raise ValueError("The state {} is not one of the end states: {}".format(
                     currentState.__name__,
-                    join(',', map(lambda x: x.__name__, endStates))
-            )
+                    ', '.join(map(lambda x: x.__name__, endStates))
+            ))
         elif customData["returnValue"] is not None:
             yield customData["returnValue"]
 

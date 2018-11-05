@@ -1,4 +1,4 @@
-from Lexer.Base import LexToken, changeAndRet
+from Lexer.Base import LexToken, doThenRet
 
 class NumberToken(LexToken):
     def __init__(self, userData, isPositive = True):
@@ -35,36 +35,36 @@ class NumberToken(LexToken):
         )
 
 isBeginningOfNumber = lambda ch: ch == '-' or ch.isdigit()
-def beginParseNumber(ch, dat):
+def beginParsingNumber(ch, dat):
     if isBeginningOfNumber(ch):
         dat["returnValue"] = NumberToken(dat, ch != '-')
     return (
-        beginParseIntegerPart(ch, dat) if ch.isdigit()
-        else beginParseIntegerPart if ch == '-'
+        beginParsingIntegerPart(ch, dat) if ch.isdigit()
+        else beginParsingIntegerPart if ch == '-'
         else JSONLexer.lexingError
     )
 
-def beginParseIntegerPart(ch, dat):
+def beginParsingIntegerPart(ch, dat):
     return (
-        changeAndRet(lambda: dat["returnValue"].update('i', ch), endParseIntegerPart) if ch == '0'
+        doThenRet(lambda: dat["returnValue"].update('i', ch), endParsingIntegerPart) if ch == '0'
         else parseIntegerPart(ch, dat) if ch.isdigit()
         else JSONLexer.lexingError
     )
 
 def parseIntegerPart(ch, dat):
     return (
-        changeAndRet(lambda: dat["returnValue"].update('i', ch), parseIntegerPart) if ch.isdigit()
-        else endParseIntegerPart(ch, dat)
+        doThenRet(lambda: dat["returnValue"].update('i', ch), parseIntegerPart) if ch.isdigit()
+        else endParsingIntegerPart(ch, dat)
     )
 
-def endParseIntegerPart(ch, dat):
+def endParsingIntegerPart(ch, dat):
     return (
-        beginParseFractionPart if ch == '.'
-        else beginParseExponentPart1 if ch in 'eE'
-        else Lexer.JSONLexer.endParse
+        beginParsingFractionPart if ch == '.'
+        else beginParsingExponentPart1 if ch in 'eE'
+        else Lexer.JSONLexer.endParsing
     )
 
-def beginParseFractionPart(ch, dat):
+def beginParsingFractionPart(ch, dat):
     return (
         parseFractionPart(ch, dat) if ch.isdigit()
         else JSONLexer.lexingError
@@ -72,19 +72,19 @@ def beginParseFractionPart(ch, dat):
 
 def parseFractionPart(ch, dat):
     return (
-        changeAndRet(lambda: dat["returnValue"].update('f', ch), parseFractionPart) if ch.isdigit()
-        else beginParseExponentPart1 if ch in 'eE'
-        else Lexer.JSONLexer.endParse
+        doThenRet(lambda: dat["returnValue"].update('f', ch), parseFractionPart) if ch.isdigit()
+        else beginParsingExponentPart1 if ch in 'eE'
+        else Lexer.JSONLexer.endParsing
     )
 
-def beginParseExponentPart1(ch, dat):
+def beginParsingExponentPart1(ch, dat):
     return (
-        changeAndRet(lambda: dat["returnValue"].update('se', ch), beginParseExponentPart2) if ch in '+-'
-        else beginParseExponentPart2(ch, dat) if ch.isdigit()
+        doThenRet(lambda: dat["returnValue"].update('se', ch), beginParsingExponentPart2) if ch in '+-'
+        else beginParsingExponentPart2(ch, dat) if ch.isdigit()
         else JSONLexer.lexingError
     )
 
-def beginParseExponentPart2(ch, dat):
+def beginParsingExponentPart2(ch, dat):
     return (
         parseExponentPart(ch, dat) if ch.isdigit()
         else JSONLexer.lexingError
@@ -92,8 +92,8 @@ def beginParseExponentPart2(ch, dat):
 
 def parseExponentPart(ch, dat):
     return (
-        changeAndRet(lambda: dat["returnValue"].update('e', ch), parseExponentPart) if ch.isdigit()
-        else Lexer.JSONLexer.endParse
+        doThenRet(lambda: dat["returnValue"].update('e', ch), parseExponentPart) if ch.isdigit()
+        else Lexer.JSONLexer.endParsing
     )
 
 import Lexer.JSONLexer
