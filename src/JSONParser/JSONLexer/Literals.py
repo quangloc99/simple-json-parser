@@ -15,13 +15,22 @@ class TrueToken(LiteralToken):
     def toPythonValue(self):
         return True
 
+    def toYAML(self, indentLevel = 0, indentPart = '  '):
+        return 'true'
+
 class FalseToken(LiteralToken):
     def toPythonValue(self):
         return False
 
+    def toYAML(self, indentLevel = 0, indentPart = '  '):
+        return 'false'
+
 class NullToken(LiteralToken):
     def toPythonValue(self):
         return None
+
+    def toYAML(self, indentLevel = 0, indentPart = '  '):
+        return 'null'
 
 def generateStates(matchString, cls):
     def generateCurrentState(currentMatchingChar, nextState):

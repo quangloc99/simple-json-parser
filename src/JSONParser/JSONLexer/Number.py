@@ -31,6 +31,17 @@ class NumberToken(LexToken):
         #return ans
         return float(str(self))
 
+    def toYAML(self, indentLevel = 0, indentPart = '  '):
+        ans = ""
+        if not self.isPositive: ans += '-'
+        ans += self.integerPart
+        if self.fractionPart != '': ans += '.' + self.fractionPart
+        if self.exponentPart != '':
+            if not self.hasPositiveExponent:
+                ans += '-'
+            ans += self.exponentPart
+        return ans
+
     def update(self, part, ch):
         val = ord(ch) - ord('0')
         if part == 'i': self.integerPart += ch

@@ -1,6 +1,7 @@
 from JSONParser.JSONLexer import createJSONLexer
-from JSONParser import parseJSON
+from JSONParser import parseJSON, generateJSON_AST
 
 if __name__ == '__main__':
-    print(parseJSON('{"x": 1, "y": [1, 2, 3, {"4": 100}]}'))
+    with open("sample.json", "r") as inp, open("sample.yaml", "w") as out:
+        out.write(generateJSON_AST(inp.read()).toYAML())
 

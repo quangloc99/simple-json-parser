@@ -1,7 +1,9 @@
+import string
 def doThenRet(actions, ret):
     actions()
     return ret
 
+specialYAMLChars = set(string.digits + ':{}[],&*#?|-<>=!%@\\ ')
 
 convertTable = {
         "\\": "\\",
@@ -12,6 +14,7 @@ convertTable = {
         "n": "\n",
         "r": "\r"
 }
+
 def convertChar(ch):
     if len(ch) == 1:
         return ch

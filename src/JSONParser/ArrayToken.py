@@ -13,3 +13,9 @@ class ArrayToken(Token):
     def toPythonValue(self):
         return list(map(lambda x: x.toPythonValue(), self.content))
 
+    def toYAML(self, indentLevel = 0, indentPart = '  '):
+        return '\n' + '\n'.join(map(
+            lambda i: indentPart * indentLevel + '- ' + i.toYAML(indentLevel + 1, indentPart),
+            self.content
+        ))
+

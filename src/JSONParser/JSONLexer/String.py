@@ -1,7 +1,7 @@
 from .Token import Token as LexToken
 from .LexingError import LexingError
 from .predefinedStates import endParsing
-from ..utils import doThenRet, convertChar
+from ..utils import doThenRet, convertChar, specialYAMLChars
 
 class StringToken(LexToken):
     def __init__(self, data):
@@ -13,6 +13,12 @@ class StringToken(LexToken):
 
     def toPythonValue(self):
         return ''.join(map(convertChar, self.content))
+
+    def toYAML(self, indentLevel = 0, indentPart = '  ', forceQuote = True):
+        ans = ''.join(self.content)
+        forceQuote = forceQuote or  any([ch in specialYAMLChars for ch in ans])
+        if forceQuote: ans = '"' + ans + '"'
+        return ans
 
     def __repr__(self):
         return "StringToken({})".format(self.content.__repr__())

@@ -13,6 +13,12 @@ class ObjectToken(Token):
             ans[k.toPythonValue()] = v.toPythonValue()
         return ans
 
+    def toYAML(self, indentLevel = 0, indentPart = '  '):
+        return '\n' + '\n'.join(map(
+            lambda kv: indentPart * indentLevel + kv[0].toYAML(indentLevel, indentPart, forceQuote=False) + ": " + kv[1].toYAML(indentLevel + 1, indentPart),
+            self.content.items()
+        ))
+
     def __str__(self):
         return str(self.content)
 
