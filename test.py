@@ -1,7 +1,8 @@
 import unittest
+from itertools import zip_longest
 from Lexer.JSONLexer import JSONLexer
 from Lexer.Base import LexingError
-from Lexer.Signs import CommaToken, ColonToken, OpenCurlyBracketToken, CloseCurlyBracketToken, OpenSquareBracketToken, CloseSquareBracketToken
+from Lexer.Tokens import *
 
 helper = lambda exp: list(map(str, JSONLexer(exp)))
 
@@ -72,7 +73,7 @@ class TestJSONLexer(unittest.TestCase):
 
         def assertIsInstanceList(ins, cls):
             nonlocal self
-            for i, (u, v) in enumerate(zip(ins, cls), 1):
+            for i, (u, v) in enumerate(zip_longest(ins, cls), 1):
                 self.assertIsInstance(u, v, "Case {}".format(i))
 
         self.assertIsInstance(first("  [   "), OpenSquareBracketToken)
@@ -129,6 +130,33 @@ class TestJSONLexer(unittest.TestCase):
                 CommaToken,
             ]
         )
+
+    def test_parse_literals(self):
+        def first(inp):
+            return next(JSONLexer(inp))
+        self.assertIsInstance(first("null"), NullToken)
+        self.assertIsInstance(first("false"), FalseToken)
+        self.assertIsInstance(first("true"), TrueToken)
+
+        def assertIsInstanceList(ins, cls):
+            nonlocal self
+            for i, (u, v) in enumerate(zip_longest(ins, cls), 1):
+                self.assertIsInstance(u, v, "Case {}".format(i))
+
+        assertIsInstanceList(
+            JSONLexer("\n\ntrue\tfalse\ntrue\ntrue null null false\t true"),
+            [
+                TrueToken,
+                FalseToken,
+                TrueToken,
+                TrueToken,
+                NullToken,
+                NullToken,
+                FalseToken,
+                TrueToken,
+            ]
+        )
+
 
 
 if __name__ == "__main__":
