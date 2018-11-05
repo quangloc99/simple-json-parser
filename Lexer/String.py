@@ -1,4 +1,4 @@
-from Lexer.Base import LexToken, doThenRet
+from Lexer.Base import LexToken, LexingError, doThenRet
 
 class StringToken(LexToken):
     def __init__(self, data):
@@ -17,7 +17,7 @@ isHexDigit = lambda ch: ch.isdigit() or 'a' <= ch <= 'f' or 'A' <= ch <= 'F'
 def beginParsingString(ch, dat):
     return (
         doThenRet(lambda: dat.update(returnValue = StringToken(dat)), parseString) if isBeginningOfString(ch)
-        else Lexer.JSONLexer.lexingError(ch, dat)
+        else LexingError.raises(dat)
     )
 
 def parseString(ch, dat):
@@ -29,19 +29,19 @@ def parseString(ch, dat):
 
 def beginParsingEscapeCharacter(ch, dat):
     dat["escapeChar"] = ''
-    return parseEscapeCharacter if ch == '\\' else Lexer.JSONLexer.lexingError(ch, dat)
+    return parseEscapeCharacter if ch == '\\' else LexingError.raises(dat)
 
 def parseEscapeCharacter(ch, dat):
     return (
         doThenRet(lambda: dat["returnValue"].content.append('\\' + ch), parseString) if ch in '"\\/bfnrt'
         else doThenRet(lambda: dat.update(unicodeVal = ''), parseUnicodeValue) if ch == 'u'
-        else Lexer.JSONLexer.lexingError(ch, dat)
+        else LexingError.raises(dat)
     )
 
 def parseUnicodeValue(ch, dat):
     if isHexDigit(ch): dat["unicodeVal"] += ch
     return (
-        Lexer.JSONLexer.lexingError(ch, dat) if not isHexDigit(ch)
+        LexingError.raises(dat) if not isHexDigit(ch)
         else parseUnicodeValue if len(dat["unicodeVal"]) < 4
         else doThenRet(lambda: dat["returnValue"].content.append('\\u' + dat["unicodeVal"].lower()), parseString)
     )

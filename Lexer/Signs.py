@@ -1,4 +1,4 @@
-from Lexer.Base import LexToken, doThenRet
+from Lexer.Base import LexToken, LexingError, doThenRet
 
 class CommaToken(LexToken): pass
 class ColonToken(LexToken): pass
@@ -21,7 +21,7 @@ isASign = lambda ch: ch in signMap
 def beginParsingSign(ch, dat):
     return (
         doThenRet(lambda: dat.update(returnValue = signMap[ch](dat)), endParsingSign) if isASign(ch)
-        else Lexer.JSONLexer.lexingError(ch, dat)
+        else LexingError.raises(dat)
     )
 
 def endParsingSign(ch, dat):

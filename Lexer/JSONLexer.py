@@ -9,9 +9,6 @@ def beginParsing(ch, dat):
     return skipSpaces(ch, dat)
 endParsing = beginParsing
 
-def lexingError(ch, dat):
-    raise LexingError(dat)
-
 def skipSpaces(ch, dat):
     return (
         endParsing if ord(ch) == 0
@@ -25,7 +22,7 @@ def mainParsePhase(ch, dat):
         beginParsingNumber(ch, dat) if isBeginningOfNumber(ch)
         else beginParsingString(ch, dat) if isBeginningOfString(ch)
         else beginParsingSign(ch, dat) if isASign(ch)
-        else lexingError(ch, dat)
+        else LexingError.raises(dat)
     )
 
 def JSONLexer(input):
