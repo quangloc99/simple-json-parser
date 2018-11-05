@@ -4,6 +4,7 @@ from Lexer.Base import doThenRet, LexingError
 from Lexer.Number import beginParsingNumber, isBeginningOfNumber
 from Lexer.String import beginParsingString, isBeginningOfString
 from Lexer.Signs import beginParsingSign, isASign
+from Lexer.Literals import beginParsingLiteral, isBeginningOfLiteral
 
 def beginParsing(ch, dat):
     return skipSpaces(ch, dat)
@@ -22,6 +23,7 @@ def mainParsePhase(ch, dat):
         beginParsingNumber(ch, dat) if isBeginningOfNumber(ch)
         else beginParsingString(ch, dat) if isBeginningOfString(ch)
         else beginParsingSign(ch, dat) if isASign(ch)
+        else beginParsingLiteral(ch, dat) if isBeginningOfLiteral(ch)
         else LexingError.raises(dat)
     )
 
