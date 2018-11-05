@@ -1,8 +1,8 @@
-def createFiniteStateMachine(input, endStates, currentState, customData = {}, lastElement = '\u0000'):
+def createFiniteStateMachine(input, endStates, initState, customData = {}, lastElement = '\u0000'):
     inputIter = iter(input)
-    currentState = currentState
     curInput = next(inputIter)
     customData["returnValue"] = None
+    currentState = initState
     try:
         while True:
             currentState = currentState(curInput, customData)
@@ -10,6 +10,7 @@ def createFiniteStateMachine(input, endStates, currentState, customData = {}, la
             if currentState in endStates:
                 yield customData["returnValue"]
                 customData["returnValue"] = None
+                currentState = initState
             else:
                 curInput = next(inputIter)
     except StopIteration:

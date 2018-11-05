@@ -1,8 +1,7 @@
 import unittest
 from itertools import zip_longest
-from Lexer.JSONLexer import JSONLexer
-from Lexer.Base import LexingError
-from Lexer.Tokens import *
+from JSONParser.JSONLexer import createJSONLexer as JSONLexer
+from JSONParser.JSONLexer import *
 
 helper = lambda exp: list(map(str, JSONLexer(exp)))
 

@@ -1,7 +1,3 @@
-def doThenRet(actions, ret):
-    actions()
-    return ret
-
 class LexingError(Exception):
     def __init__(self, userData):
         self.lineNum = userData["lineNum"]
@@ -14,6 +10,3 @@ class LexingError(Exception):
         raise cls(userData)
 
 
-class LexToken:
-    def __init__(self, userData):
-        self.lineNumber = userData["lineNum"]

@@ -1,4 +1,7 @@
-from Lexer.Base import LexToken, LexingError, doThenRet
+from .Token import Token as LexToken
+from .LexingError import LexingError
+from .predefinedStates import endParsing
+from ..utils import doThenRet
 
 class CommaToken(LexToken): pass
 class ColonToken(LexToken): pass
@@ -25,7 +28,5 @@ def beginParsingSign(ch, dat):
     )
 
 def endParsingSign(ch, dat):
-    return Lexer.JSONLexer.endParsing
-
-import Lexer.JSONLexer
+    return endParsing
 

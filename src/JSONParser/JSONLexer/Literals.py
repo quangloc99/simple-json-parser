@@ -1,4 +1,7 @@
-from Lexer.Base import LexToken, LexingError, doThenRet
+from .Token import Token as LexToken
+from .LexingError import LexingError
+from .predefinedStates import endParsing
+from ..utils import doThenRet
 
 class TrueToken(LexToken): pass
 class FalseToken(LexToken): pass
@@ -13,7 +16,7 @@ def generateStates(matchString, cls):
 
     def finalState(ch, dat):
         dat['returnValue'] = cls(dat)
-        return Lexer.JSONLexer.endParsing
+        return endParsing
 
     curState = finalState
     for i in range(len(matchString) - 1, -1, -1):
@@ -34,7 +37,5 @@ def beginParsingLiteral(ch, dat):
         else beginParsingNull(ch, dat) if ch == 'n'
         else LexingError.raises(dat)
     )
-
-import Lexer.JSONLexer
 
 

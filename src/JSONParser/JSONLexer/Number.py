@@ -1,4 +1,7 @@
-from Lexer.Base import LexToken, LexingError, doThenRet
+from .Token import Token as LexToken
+from .LexingError import LexingError
+from .predefinedStates import endParsing
+from ..utils import doThenRet
 
 class NumberToken(LexToken):
     def __init__(self, userData, isPositive = True):
@@ -61,7 +64,7 @@ def endParsingIntegerPart(ch, dat):
     return (
         beginParsingFractionPart if ch == '.'
         else beginParsingExponentPart1 if ch in 'eE'
-        else Lexer.JSONLexer.endParsing
+        else endParsing
     )
 
 def beginParsingFractionPart(ch, dat):
@@ -74,7 +77,7 @@ def parseFractionPart(ch, dat):
     return (
         doThenRet(lambda: dat["returnValue"].update('f', ch), parseFractionPart) if ch.isdigit()
         else beginParsingExponentPart1 if ch in 'eE'
-        else Lexer.JSONLexer.endParsing
+        else endParsing
     )
 
 def beginParsingExponentPart1(ch, dat):
@@ -93,7 +96,6 @@ def beginParsingExponentPart2(ch, dat):
 def parseExponentPart(ch, dat):
     return (
         doThenRet(lambda: dat["returnValue"].update('e', ch), parseExponentPart) if ch.isdigit()
-        else Lexer.JSONLexer.endParsing
+        else endParsing
     )
 
-import Lexer.JSONLexer

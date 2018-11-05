@@ -1,4 +1,7 @@
-from Lexer.Base import LexToken, LexingError, doThenRet
+from .Token import Token as LexToken
+from .LexingError import LexingError
+from .predefinedStates import endParsing
+from ..utils import doThenRet
 
 class StringToken(LexToken):
     def __init__(self, data):
@@ -47,7 +50,5 @@ def parseUnicodeValue(ch, dat):
     )
 
 def endParsingString(ch, dat):
-    return Lexer.JSONLexer.endParsing
+    return endParsing
         
-
-import Lexer.JSONLexer

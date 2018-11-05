@@ -1,14 +1,12 @@
-from createFiniteStateMachine import createFiniteStateMachine
+from ..finiteStateMachine import createFiniteStateMachine
+from ..utils import doThenRet
 
-from Lexer.Base import doThenRet, LexingError
-from Lexer.Number import beginParsingNumber, isBeginningOfNumber
-from Lexer.String import beginParsingString, isBeginningOfString
-from Lexer.Signs import beginParsingSign, isASign
-from Lexer.Literals import beginParsingLiteral, isBeginningOfLiteral
-
-def beginParsing(ch, dat):
-    return skipSpaces(ch, dat)
-endParsing = beginParsing
+from .LexingError import LexingError
+from .Number import beginParsingNumber, isBeginningOfNumber
+from .String import beginParsingString, isBeginningOfString
+from .Signs import beginParsingSign, isASign
+from .Literals import beginParsingLiteral, isBeginningOfLiteral
+from .predefinedStates import endParsing
 
 def skipSpaces(ch, dat):
     return (
@@ -17,6 +15,8 @@ def skipSpaces(ch, dat):
         else skipSpaces if ch.isspace()
         else mainParsePhase(ch, dat)
     )
+
+beginParsing = skipSpaces
 
 def mainParsePhase(ch, dat):
     return (
@@ -27,10 +27,10 @@ def mainParsePhase(ch, dat):
         else LexingError.raises(dat)
     )
 
-def JSONLexer(input):
+def createJSONLexer(input):
     dat = {'lineNum': 1}
     def updateLineNum():
         dat['lineNum'] += 1
     dat['updateLineNum'] = updateLineNum
-    return createFiniteStateMachine(input, set([beginParsing, endParsing]), beginParsing, dat);
+    return createFiniteStateMachine(input, set([endParsing]), beginParsing, dat);
     
