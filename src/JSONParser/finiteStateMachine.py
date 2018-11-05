@@ -5,8 +5,9 @@ def createFiniteStateMachine(input, endStates, initState, customData = {}, lastE
     currentState = initState
     try:
         while True:
+            #print("-------------------------")
+            #print(currentState.__name__, curInput, customData["returnValue"].__repr__())
             currentState = currentState(curInput, customData)
-            #print(currentState.__name__, currentState in endStates, customData["returnValue"].__repr__())
             if currentState in endStates:
                 yield customData["returnValue"]
                 customData["returnValue"] = None
