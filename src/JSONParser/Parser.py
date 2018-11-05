@@ -14,7 +14,7 @@ isCurlyBracket = lambda tok: isinstance(tok, CloseCurlyBracketToken) or isinstan
 isSameBracketType = lambda tok1, tok2: isCurlyBracket(tok1) == isCurlyBracket(tok2)
 isBracket = lambda tok: isCloseBracket(tok) or isOpenBracket(tok)
 
-def parseJSON(input):
+def generateJSON_AST(input):
     lexer = createJSONLexer(input)
     tokenStack = []
     bracketTokenStack = []
@@ -26,7 +26,6 @@ def parseJSON(input):
 
     for tok in lexer:
         tokenStack.append(tok)
-        print(tokenStack)
         if not isBracket(tok):
             continue
         if isOpenBracket(tok):
@@ -40,5 +39,11 @@ def parseJSON(input):
         else:
             array = next(createReversedArrayParser(popTokenStackGenerator()))
             tokenStack.append(array)
+    if len(tokenStack) == 0:
+        return None
+    if len(tokenStack) > 1:
+        raise ValueError
+    if not tokenStack[0].isValue():
+        raise ValueError
     return tokenStack[-1]
 

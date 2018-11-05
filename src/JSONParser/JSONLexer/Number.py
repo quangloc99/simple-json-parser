@@ -25,7 +25,7 @@ class NumberToken(LexToken):
                 ans *= 10 ** int(self.exponentPart)
             else:
                 ans /= 10 ** int(self.exponentPart)
-        if not self.isPositve:
+        if not self.isPositive:
             ans = -ans
         return ans
 

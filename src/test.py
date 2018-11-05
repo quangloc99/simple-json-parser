@@ -1,7 +1,9 @@
 import unittest
 from itertools import zip_longest
 from JSONParser.JSONLexer import createJSONLexer as JSONLexer
+from JSONParser import generateJSON_AST
 from JSONParser.JSONLexer import *
+import json # ironically, using json to test json
 
 helper = lambda exp: list(map(str, JSONLexer(exp)))
 
@@ -156,7 +158,23 @@ class TestJSONLexer(unittest.TestCase):
             ]
         )
 
+    def test_parse_array(self):
+        def fordAndBack(inp):
+            return json.dumps(generateJSON_AST(inp).toPythonValue())
 
+        def myassert(inp, exp):
+            nonlocal self
+            self.assertEqual(fordAndBack(inp), json.dumps(exp))
+
+        myassert("[]", [])
+        myassert("[1]", [1.0])
+        myassert("[1,2,3,false, true\n,null]", [1.0, 2.0, 3.0, False, True, None])
+        myassert("[[]]", [[]])
+        myassert("[[], [], []]", [[], [], []])
+        myassert("[1e9]", [1e9])
+        myassert("[-123545.56457, [\n\n3\n\n\n\n], \nnull, \nfalse]", [-123545.56457, [3.0], None, False])
+        myassert('["asbsseesg\\u000a", "   -2345"]', ["asbsseesg\u000a", "   -2345"])
+        myassert('["ewrog3u58", 3656.23563,    null,false\t, false]', ["ewrog3u58", 3656.23563, None, False, False])
 
 if __name__ == "__main__":
     unittest.main()

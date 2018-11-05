@@ -1,13 +1,18 @@
 from .Token import Token as LexToken
 from .LexingError import LexingError
 from .predefinedStates import endParsing
-from ..utils import doThenRet
+from ..utils import doThenRet, convertChar
 
 class StringToken(LexToken):
     def __init__(self, data):
         super().__init__(data)
-        self._isValue = True
         self.content = []
+
+    def isValue(self):
+        return True
+
+    def toPythonValue(self):
+        return ''.join(map(convertChar, self.content))
 
     def __repr__(self):
         return "StringToken({})".format(self.content.__repr__())
