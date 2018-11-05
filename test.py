@@ -1,6 +1,7 @@
 import unittest
 from Lexer.JSONLexer import JSONLexer
 from Lexer.Base import LexingError
+from Lexer.Signs import CommaToken, ColonToken, OpenCurlyBracketToken, CloseCurlyBracketToken, OpenSquareBracketToken, CloseSquareBracketToken
 
 helper = lambda exp: list(map(str, JSONLexer(exp)))
 
@@ -64,6 +65,71 @@ class TestJSONLexer(unittest.TestCase):
         with self.assertRaises(ValueError): next(JSONLexer('     " sagfjsklh hgkdsgh  shuelighkshg'))
         with self.assertRaises(LexingError): next(JSONLexer(' "\\somevalue"  '))
         with self.assertRaises(LexingError): next(JSONLexer('   "\\ux"'))
+
+    def test_parse_signs(self):
+        def first(inp):
+            return next(JSONLexer(inp))
+
+        def assertIsInstanceList(ins, cls):
+            nonlocal self
+            for i, (u, v) in enumerate(zip(ins, cls), 1):
+                self.assertIsInstance(u, v, "Case {}".format(i))
+
+        self.assertIsInstance(first("  [   "), OpenSquareBracketToken)
+        self.assertIsInstance(first("  \n  ] \t  "), CloseSquareBracketToken)
+        self.assertIsInstance(first("  { "), OpenCurlyBracketToken)
+        self.assertIsInstance(first("  }  "), CloseCurlyBracketToken)
+        self.assertIsInstance(first(" , "), CommaToken)
+        self.assertIsInstance(first("  :  "), ColonToken)
+
+        assertIsInstanceList(
+            JSONLexer(" [][]][]  \t {} {{}{} \n ,,,:::  \t[,]],[\t\t {:}}}{{{:,  \n\n\n"),
+            [
+                OpenSquareBracketToken,
+                CloseSquareBracketToken,
+                OpenSquareBracketToken,
+                CloseSquareBracketToken,
+                CloseSquareBracketToken,
+                OpenSquareBracketToken,
+                CloseSquareBracketToken,
+
+                OpenCurlyBracketToken, 
+                CloseCurlyBracketToken,
+
+                OpenCurlyBracketToken, 
+                OpenCurlyBracketToken, 
+                CloseCurlyBracketToken,
+                OpenCurlyBracketToken, 
+                CloseCurlyBracketToken,
+
+                CommaToken,
+                CommaToken,
+                CommaToken,
+                ColonToken,
+                ColonToken,
+                ColonToken,
+
+                OpenSquareBracketToken,
+                CommaToken,
+                CloseSquareBracketToken,
+                CloseSquareBracketToken,
+                CommaToken,
+                OpenSquareBracketToken,
+
+                
+                OpenCurlyBracketToken, 
+                ColonToken,
+                CloseCurlyBracketToken,
+                CloseCurlyBracketToken,
+                CloseCurlyBracketToken,
+                OpenCurlyBracketToken, 
+                OpenCurlyBracketToken, 
+                OpenCurlyBracketToken, 
+                ColonToken,
+                CommaToken,
+            ]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
