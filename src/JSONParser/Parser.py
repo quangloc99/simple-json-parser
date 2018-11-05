@@ -1,4 +1,5 @@
 from .ReversedArrayParser import createReversedArrayParser
+from .ReversedObjectParser import createReversedObjectParser
 from .ParsingError import ParsingError
 from .JSONLexer import (
         createJSONLexer, 
@@ -35,10 +36,11 @@ def generateJSON_AST(input):
             raise ParsingError(tok)
         bracketTokenStack.pop()
         if isCurlyBracket(tok):
-            pass
+            newToken = next(createReversedObjectParser(popTokenStackGenerator()))
         else:
-            array = next(createReversedArrayParser(popTokenStackGenerator()))
-            tokenStack.append(array)
+            newToken = next(createReversedArrayParser(popTokenStackGenerator()))
+        tokenStack.append(newToken)
+
     if len(tokenStack) == 0:
         return None
     if len(tokenStack) > 1:
@@ -46,4 +48,7 @@ def generateJSON_AST(input):
     if not tokenStack[0].isValue():
         raise ValueError
     return tokenStack[-1]
+
+def parseJSON(input):
+    return generateJSON_AST(input).toPythonValue()
 

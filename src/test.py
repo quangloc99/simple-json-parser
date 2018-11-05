@@ -1,13 +1,17 @@
 import unittest
 from itertools import zip_longest
 from JSONParser.JSONLexer import createJSONLexer as JSONLexer
-from JSONParser import generateJSON_AST
+from JSONParser import parseJSON
 from JSONParser.JSONLexer import *
 import json # ironically, using json to test json
 
 helper = lambda exp: list(map(str, JSONLexer(exp)))
 
-class TestJSONLexer(unittest.TestCase):
+class HelperAssert:
+    def assertEqualJSONString(self, a, b):
+        self.assertEqual(json.dumps(a, sort_keys=True), json.dumps(b, sort_keys=True))
+
+class TestJSONLexer(unittest.TestCase, HelperAssert):
     #@unittest.skip("")
     def test_skip_spaces(self):
         self.assertEqual(helper(""), [])
@@ -159,22 +163,104 @@ class TestJSONLexer(unittest.TestCase):
         )
 
     def test_parse_array(self):
-        def fordAndBack(inp):
-            return json.dumps(generateJSON_AST(inp).toPythonValue())
+        self.assertEqualJSONString(parseJSON("[]"), [])
+        self.assertEqualJSONString(parseJSON("[1]"), [1.0])
+        self.assertEqualJSONString(parseJSON("[1,2,3,false, true\n,null]"), [1.0, 2.0, 3.0, False, True, None])
+        self.assertEqualJSONString(parseJSON("[[]]"), [[]])
+        self.assertEqualJSONString(parseJSON("[[], [], []]"), [[], [], []])
+        self.assertEqualJSONString(parseJSON("[1e9]"), [1e9])
+        self.assertEqualJSONString(parseJSON("[-123545.56457, [\n\n3\n\n\n\n], \nnull, \nfalse]"), [-123545.56457, [3.0], None, False])
+        self.assertEqualJSONString(parseJSON('["asbsseesg\\u000a", "   -2345"]'), ["asbsseesg\u000a", "   -2345"])
+        self.assertEqualJSONString(parseJSON('["ewrog3u58", 3656.23563,    null,false\t, false]'), ["ewrog3u58", 3656.23563, None, False, False])
 
-        def myassert(inp, exp):
-            nonlocal self
-            self.assertEqual(fordAndBack(inp), json.dumps(exp))
+    def test_parse_object(self):
+        self.assertEqualJSONString(parseJSON("{}"), {})
+        self.assertEqualJSONString(parseJSON('{"a": 0.1}'), {"a": 0.1})
+        self.assertEqualJSONString(parseJSON('{"b": null,\n"c": false, "d": true, "f": -6.9e-9}'), {"b": None, "c": False, "d": True, "f": -6.9e-9})
+        self.assertEqualJSONString(parseJSON('{"a":{"b":{"c":{}}}}'), {"a":{"b":{"c":{}}}})
 
-        myassert("[]", [])
-        myassert("[1]", [1.0])
-        myassert("[1,2,3,false, true\n,null]", [1.0, 2.0, 3.0, False, True, None])
-        myassert("[[]]", [[]])
-        myassert("[[], [], []]", [[], [], []])
-        myassert("[1e9]", [1e9])
-        myassert("[-123545.56457, [\n\n3\n\n\n\n], \nnull, \nfalse]", [-123545.56457, [3.0], None, False])
-        myassert('["asbsseesg\\u000a", "   -2345"]', ["asbsseesg\u000a", "   -2345"])
-        myassert('["ewrog3u58", 3656.23563,    null,false\t, false]', ["ewrog3u58", 3656.23563, None, False, False])
+    def test_complex(self):
+        self.assertEqualJSONString(parseJSON('{"command": [   ],"within": \t\t["universe", false\n ] }'), {
+            "command": [],
+            "within": ["universe", False]
+        })
+        self.assertEqualJSONString(parseJSON('''
+            [
+              {
+                "program": {
+                  "adjective": -108551751,
+                  "sense": false
+                }
+              },
+              916748759.1955104
+            ]
+            '''),
+            [ { "program": { "adjective": -108551751.0, "sense": False } }, 916748759.1955104 ]
+        )
+
+        self.assertEqualJSONString(parseJSON('''
+            {
+              "-m5WT/": [ "^koG", "aQ", "%",
+                {
+                  "gCD@": "7",
+              "^;Bbjg": [ 102200932.16621447, -1103826775,
+                    [
+                    {     "": false,"n=H6":-1959301866, "RJ\\\\": false },
+                      true, false, "",
+                   -457508445
+                ], "fK",
+                    [55391913.57936764
+                    ]
+                  ],
+                  "^'#": "", "qtI": "YiKG\\\""
+                },
+                "|"
+              ],
+              "w,:V": ".",
+              "y_F":false, "zN2AJ!": true, "5t,wGU": { "+IP7L": true, ",V%=_": true,
+                "<,$": "_IqqU6",
+                "$+_T": {
+              "zA>":[ 1455897291.1386685, { ",\\\\fn": [ 1928704017,
+               -1913490965.7375894,
+                 true, false, -319104944, 1504012558 ],
+            \t        ":nN": 814615960.550847, "": false
+                    },
+                    "d#"
+                  ]
+                },
+                "5[": true, "-pT": false } } 
+            '''),{
+                  "-m5WT/": [
+                    "^koG", "aQ", "%",
+                    {
+                      "gCD@": "7",
+                      "^;Bbjg": [
+                        102200932.16621447,
+                        -1103826775.0,
+                        [ { "": False, "n=H6": -1959301866.0, "RJ\\": False }, True, False, "", -457508445.0 ],
+                        "fK",
+                        [ 55391913.57936764 ]
+                      ],
+                      "^'#": "", "qtI": "YiKG\""
+                    }, "|"
+                  ],
+                  "w,:V": ".", "y_F": False, "zN2AJ!": True,
+                  "5t,wGU": {
+                    "+IP7L": True, ",V%=_": True, "<,$": "_IqqU6",
+                    "$+_T": {
+                      "zA>": [
+                        1455897291.1386685,
+                        {
+                          ",\\fn": [ 1928704017.0, -1913490965.7375894, True, False, -319104944.0, 1504012558.0 ],
+                          ":nN": 814615960.550847, "": False
+                        },
+                        "d#"
+                      ]
+                    },
+                    "5[": True, "-pT": False
+                  }
+            } 
+        )
 
 if __name__ == "__main__":
     unittest.main()

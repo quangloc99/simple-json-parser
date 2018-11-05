@@ -1,2 +1,4 @@
+from .JSONLexer import *
 from .ArrayToken import ArrayToken
-from .Parser import generateJSON_AST
+from .ObjectToken import ObjectToken
+from .Parser import generateJSON_AST, parseJSON

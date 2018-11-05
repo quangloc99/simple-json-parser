@@ -17,17 +17,19 @@ class NumberToken(LexToken):
         return True
 
     def toPythonValue(self):
-        ans = float(self.integerPart)
-        if self.fractionPart != '':
-            ans += int(self.fractionPart) / 10 ** len(self.fractionPart)
-        if self.exponentPart != '':
-            if self.hasPositiveExponent:
-                ans *= 10 ** int(self.exponentPart)
-            else:
-                ans /= 10 ** int(self.exponentPart)
-        if not self.isPositive:
-            ans = -ans
-        return ans
+        ## This solution in the comment has precision error.
+        #ans = float(self.integerPart)
+        #if self.fractionPart != '':
+            #ans += int(self.fractionPart) / 10 ** len(self.fractionPart)
+        #if self.exponentPart != '':
+            #if self.hasPositiveExponent:
+                #ans *= 10 ** int(self.exponentPart)
+            #else:
+                #ans /= 10 ** int(self.exponentPart)
+        #if not self.isPositive:
+            #ans = -ans
+        #return ans
+        return float(str(self))
 
     def update(self, part, ch):
         val = ord(ch) - ord('0')
