@@ -33,12 +33,12 @@ class NumberToken(LexToken):
 
     def toYAML(self, indentLevel = 0, indentPart = '  '):
         ans = ""
-        if not self.isPositive: ans += '-'
+        if not self.isPositive: ans += ''
         ans += self.integerPart
         if self.fractionPart != '': ans += '.' + self.fractionPart
         if self.exponentPart != '':
-            if not self.hasPositiveExponent:
-                ans += '-'
+            ans += 'e'
+            if not self.hasPositiveExponent: ans += '-'
             ans += self.exponentPart
         return ans
 
