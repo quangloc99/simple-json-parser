@@ -1,0 +1,54 @@
+{
+  "day": "Monday",
+  "lessons": [
+    {
+      "time": {
+        "from": { "hour": 8, "minute": 20 },
+        "to": { "hour": 9, "minute": 50 },
+        "odd week": true,
+        "even week": true
+      },
+      "room": 3207,
+      "address": {
+        "street": "Ломоносова",
+        "house": 9
+      },
+      "subject": "Foreign language",
+      "type": "practice",
+      "professor": ""
+    },
+    {
+      "time": {
+        "from": { "hour": 10, "minute": 0 },
+        "to": { "hour": 11, "minute": 30 },
+        "odd week": true,
+        "even week": true
+      },
+      "room": 2503,
+      "address": {
+        "street": "Ломоносова",
+        "house": 9
+      },
+      "subject": "Math",
+      "type": "lecture",
+      "professor": "Рябова Анна Викторовна"
+    },
+    {
+      "time": {
+        "from": { "hour": 11, "minute": 40 },
+        "to": { "hour": 13, "minute": 10 },
+        "odd week": true,
+        "even week": true
+      },
+      "room": 2517,
+      "address": {
+        "street": "Ломоносова",
+        "house": 9
+      },
+      "subject": "Math",
+      "type": "practice",
+      "professor": "Рябова Анна Викторовна"
+    }
+  ]
+}
+
