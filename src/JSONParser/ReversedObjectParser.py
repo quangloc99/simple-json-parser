@@ -35,15 +35,18 @@ def parseColon(tok, dat):
     )
 
 def parseString(tok, dat):
-    return (
-            doThenRet(lambda: dat["returnValue"].content.update({tok: dat["curVal"]}), parseCommaOrBracket) if isinstance(tok, StringToken)
-            else ParsingError.raises(tok)
-    )
+    if isinstance(tok, StringToken):
+        if tok in dat["returnValue"].content:
+            raise ParsingError(tok)
+        dat["returnValue"].content[tok] = dat["curVal"]
+        dat["returnValue"].order.append(tok)
+        return parseCommaOrBracket
+    raise ParsingError(tok)
 
 def parseCommaOrBracket(tok, dat):
     return (
             parseValue if isinstance(tok, CommaToken)
-            else endParsingReversedObject if isinstance(tok, OpenCurlyBracketToken)
+            else doThenRet(lambda: dat["returnValue"].order.reverse(), endParsingReversedObject) if isinstance(tok, OpenCurlyBracketToken)
             else ParsingError.raises(tok)
     )
 
